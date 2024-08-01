@@ -1,8 +1,8 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// import getDataUri from "../utils/datauri.js";
-// import cloudinary from "../utils/cloudinary.js";
+import cloudinary from "../utills/cloudinary.js";
+import getDataUri from "../utills/datauri.js";
 
 
 
@@ -19,8 +19,8 @@ export const register = async(req, res)=> {
             });
         };
          const file = req.file;
-        // const fileUri = getDataUri(file);
-        // const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+         const fileUri = getDataUri(file);
+         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
         const user = await User.findOne({ email });
         if (user) {
@@ -40,7 +40,7 @@ export const register = async(req, res)=> {
             password: hashedPassword,
             role,
             profile:{
-                // profilePhoto:cloudResponse.secure_url,
+                profilePhoto:cloudResponse.secure_url,
             }
         });
 
@@ -124,8 +124,8 @@ export const updateProfile = async (req, res) => {
         
         const file = req.file;
         // cloudinary ayega idhar
-        // const fileUri = getDataUri(file);
-        // const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+         const fileUri = getDataUri(file);
+         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
 
 
@@ -149,11 +149,11 @@ export const updateProfile = async (req, res) => {
         if(bio) user.profile.bio = bio
         if(skills) user.profile.skills = skillsArray
       
-        // // resume comes later here...
-        // if(cloudResponse){
-        //     user.profile.resume = cloudResponse.secure_url // save the cloudinary url
-        //     user.profile.resumeOriginalName = file.originalname // Save the original file name
-        // }
+         // resume comes later here...
+        if(cloudResponse){
+            user.profile.resume = cloudResponse.secure_url // save the cloudinary url
+            user.profile.resumeOriginalName = file.originalname // Save the original file name
+        }
 
 
         await user.save();
